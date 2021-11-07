@@ -2,8 +2,7 @@ import {StyleSheet} from 'react-native';
 
 export const loginStyles = StyleSheet.create({
   formContainer: {
-    // flex: 1,
-    marginTop: 50,
+    flex: 1,
     paddingHorizontal: 30,
     justifyContent: 'center',
     height: 600,
