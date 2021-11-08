@@ -1,4 +1,6 @@
 import React, {createContext, Reducer, useReducer} from 'react';
+import cafeApi from '../api/cafeApi';
+import {LoginData, LoginResponse} from '../interfaces/appInterfaces';
 import {
   AuthActions,
   authReducer,
@@ -8,7 +10,7 @@ import {
 
 interface AuthContextProps extends AuthState {
   signUp: () => void;
-  signIn: () => void;
+  signIn: (loginData: LoginData) => void;
   logOut: () => void;
   removeError: () => void;
 }
@@ -27,7 +29,18 @@ export const AuthProvider = ({
   const signUp = () => {
     // dispatch({type: 'signUp', payload: {user}});
   };
-  const signIn = () => {};
+  const signIn = async (loginData: LoginData) => {
+    try {
+      const resp = await cafeApi.post<LoginResponse>('/auth/login', loginData);
+      dispatch({
+        type: 'signUp',
+        payload: {token: resp.data.token, user: resp.data.usuario},
+      });
+    } catch (error: any) {
+      dispatch({type: 'addError', payload: error});
+      console.log({error});
+    }
+  };
   const logOut = () => {};
   const removeError = () => {};
 
