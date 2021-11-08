@@ -37,11 +37,16 @@ export const AuthProvider = ({
         payload: {token: resp.data.token, user: resp.data.usuario},
       });
     } catch (error: any) {
-      dispatch({type: 'addError', payload: error.response.data.msg});
+      dispatch({
+        type: 'addError',
+        payload: error.response.data.msg || 'Información incorrecta',
+      });
     }
   };
   const logOut = () => {};
-  const removeError = () => {};
+  const removeError = () => {
+    dispatch({type: 'removeError'});
+  };
 
   return (
     <AuthContext.Provider

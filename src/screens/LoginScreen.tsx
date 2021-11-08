@@ -1,5 +1,6 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -19,7 +20,7 @@ import {AuthContext} from '../context/AuthContext';
 interface Props extends StackScreenProps<any, any> {}
 
 export const LoginScreen = ({navigation}: Props) => {
-  const {signIn} = useContext(AuthContext);
+  const {signIn, errorMessage, removeError} = useContext(AuthContext);
   const {email, password, onChange} = useForm({
     email: '',
     password: '',
@@ -29,6 +30,16 @@ export const LoginScreen = ({navigation}: Props) => {
     signIn({correo: email, password});
     Keyboard.dismiss();
   };
+
+  useEffect(() => {
+    if (errorMessage.length === 0) return;
+    Alert.alert('Login incorrecto', errorMessage, [
+      {
+        text: 'Ok',
+        onPress: () => removeError(),
+      },
+    ]);
+  }, [errorMessage]);
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{flex: 1}}>
