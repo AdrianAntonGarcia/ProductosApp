@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -13,10 +14,13 @@ import {loginStyles} from '../theme/loginTheme';
 import {WhiteLogo} from '../components/WhiteLogo';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useForm} from '../hooks/useForm';
+import {AuthContext} from '../context/AuthContext';
 
 interface Props extends StackScreenProps<any, any> {}
 
 export const RegisterScreen = ({navigation}: Props) => {
+  const {signUp, errorMessage, removeError} = useContext(AuthContext);
+
   const {name, email, password, onChange} = useForm({
     name: '',
     email: '',
@@ -24,9 +28,19 @@ export const RegisterScreen = ({navigation}: Props) => {
   });
 
   const onRegister = () => {
-    console.log({email, password, name});
+    signUp({correo: email, password, nombre: name});
     Keyboard.dismiss();
   };
+
+  useEffect(() => {
+    if (errorMessage.length === 0) return;
+    Alert.alert('Login incorrecto', errorMessage, [
+      {
+        text: 'Ok',
+        onPress: () => removeError(),
+      },
+    ]);
+  }, [errorMessage]);
   return (
     <>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

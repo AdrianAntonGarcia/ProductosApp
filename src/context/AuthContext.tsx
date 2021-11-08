@@ -1,16 +1,21 @@
 import React, {createContext, Reducer, useReducer, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import cafeApi from '../api/cafeApi';
-import {LoginData, LoginResponse} from '../interfaces/appInterfaces';
+import {
+  LoginData,
+  LoginResponse,
+  RegisterData,
+} from '../interfaces/appInterfaces';
 import {
   AuthActions,
   authReducer,
   AuthState,
   authInitialState,
 } from './AuthReducer';
+import {Axios, AxiosError} from 'axios';
 
 interface AuthContextProps extends AuthState {
-  signUp: () => void;
+  signUp: (registerData: RegisterData) => void;
   signIn: (loginData: LoginData) => void;
   logOut: () => void;
   removeError: () => void;
@@ -27,8 +32,21 @@ export const AuthProvider = ({
     authReducer,
     authInitialState,
   );
-  const signUp = () => {
-    // dispatch({type: 'signUp', payload: {user}});
+  const signUp = async (registerData: RegisterData) => {
+    try {
+      console.log(registerData);
+      const resp = await cafeApi.post<LoginResponse>('/usuarios', registerData);
+      dispatch({
+        type: 'signUp',
+        payload: {token: resp.data.token, user: resp.data.usuario},
+      });
+      await AsyncStorage.setItem('token', resp.data.token);
+    } catch (error: any) {
+      dispatch({
+        type: 'addError',
+        payload: error.response.data.errors[0].msg || 'Revise la información',
+      });
+    }
   };
   const signIn = async (loginData: LoginData) => {
     try {
