@@ -37,8 +37,7 @@ export const AuthProvider = ({
         payload: {token: resp.data.token, user: resp.data.usuario},
       });
     } catch (error: any) {
-      dispatch({type: 'addError', payload: error});
-      console.log({error});
+      dispatch({type: 'addError', payload: error.response.data.msg});
     }
   };
   const logOut = () => {};
