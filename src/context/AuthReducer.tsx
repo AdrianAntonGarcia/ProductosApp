@@ -1,4 +1,3 @@
-import {act} from 'react-test-renderer';
 import {Usuario} from '../interfaces/appInterfaces';
 
 export interface AuthState {
@@ -7,6 +6,13 @@ export interface AuthState {
   errorMessage: string;
   user: Usuario | null;
 }
+
+export const authInitialState: AuthState = {
+  errorMessage: '',
+  token: null,
+  user: null,
+  status: 'checking',
+};
 
 export type AuthActions =
   | {

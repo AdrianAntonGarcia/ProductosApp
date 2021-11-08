@@ -1,17 +1,17 @@
 import React, {createContext, Reducer, useReducer} from 'react';
-import {Usuario} from '../interfaces/appInterfaces';
-import {AuthActions, authReducer, AuthState} from './AuthReducer';
+import {
+  AuthActions,
+  authReducer,
+  AuthState,
+  authInitialState,
+} from './AuthReducer';
 
-type AuthContextProps = {
-  errorMessage: string;
-  token: string | null;
-  user: Usuario | null;
-  status: 'checking' | 'authenticated' | 'no-authenticated';
+interface AuthContextProps extends AuthState {
   signUp: () => void;
   signIn: () => void;
   logOut: () => void;
   removeError: () => void;
-};
+}
 
 export const AuthContext = createContext({} as AuthContextProps);
 
@@ -22,14 +22,11 @@ export const AuthProvider = ({
 }) => {
   const [state, dispatch] = useReducer<Reducer<AuthState, AuthActions>>(
     authReducer,
-    {
-      errorMessage: '',
-      token: null,
-      user: null,
-      status: 'no-authenticated',
-    },
+    authInitialState,
   );
-  const signUp = () => {};
+  const signUp = () => {
+    // dispatch({type: 'signUp', payload: {user}});
+  };
   const signIn = () => {};
   const logOut = () => {};
   const removeError = () => {};
