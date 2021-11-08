@@ -1,5 +1,6 @@
-import React, {createContext} from 'react';
+import React, {createContext, Reducer, useReducer} from 'react';
 import {Usuario} from '../interfaces/appInterfaces';
+import {AuthActions, authReducer, AuthState} from './AuthReducer';
 
 type AuthContextProps = {
   errorMessage: string;
@@ -19,5 +20,24 @@ export const AuthProvider = ({
 }: {
   children: JSX.Element | JSX.Element[];
 }) => {
-  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
+  const [state, dispatch] = useReducer<Reducer<AuthState, AuthActions>>(
+    authReducer,
+    {
+      errorMessage: '',
+      token: null,
+      user: null,
+      status: 'no-authenticated',
+    },
+  );
+  const signUp = () => {};
+  const signIn = () => {};
+  const logOut = () => {};
+  const removeError = () => {};
+
+  return (
+    <AuthContext.Provider
+      value={{...state, signUp, signIn, logOut, removeError}}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
