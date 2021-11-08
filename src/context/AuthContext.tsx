@@ -53,7 +53,15 @@ export const AuthProvider = ({
   const checkToken = async () => {
     const token = await AsyncStorage.getItem('token');
     if (!token) return dispatch({type: 'notAuthenticated'});
-    // if(token) return dispatch({type:''})
+
+    const {data, status} = await cafeApi.get<LoginResponse>('/auth');
+    if (status !== 200) {
+      return dispatch({type: 'notAuthenticated'});
+    }
+    dispatch({
+      type: 'signUp',
+      payload: {token: data.token, user: data.usuario},
+    });
   };
 
   useEffect(() => {
