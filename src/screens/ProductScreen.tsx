@@ -41,7 +41,6 @@ export const ProductScreen = ({
   const loadProduct = async () => {
     if (id.length === 0) return;
     const product = await loadProductById(id);
-    console.log(product);
     setFormValue({
       _id: product._id,
       categoriaId: product.categoria._id,
@@ -50,12 +49,13 @@ export const ProductScreen = ({
     });
   };
 
-  const saveOrUpdate = () => {
-    if (id.length > 0) {
+  const saveOrUpdate = async () => {
+    if (_id.length > 0) {
       updateProduct(categoriaId, nombre, id);
     } else {
       const tempCategoriaId = categoriaId || categories[0]._id;
-      addProduct(tempCategoriaId, nombre);
+      const newProduct = await addProduct(tempCategoriaId, nombre);
+      onChange(newProduct._id, '_id');
     }
   };
 
@@ -91,7 +91,7 @@ export const ProductScreen = ({
           ))}
         </Picker>
         <Button title="Guardar" color="#5856D6" onPress={saveOrUpdate} />
-        {id.length > 0 && (
+        {_id.length > 0 && (
           <View
             style={{
               flexDirection: 'row',
