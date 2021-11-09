@@ -8,15 +8,18 @@ import {
   TouchableOpacity,
   ScrollView,
   RefreshControl,
+  Button,
 } from 'react-native';
 import {ProductsContext} from '../context/ProductsContext';
 import {ProductsStackParams} from '../navigator/ProductsNavigator';
+import {AuthContext} from '../context/AuthContext';
 
 interface Props
   extends StackScreenProps<ProductsStackParams, 'ProductsScreen'> {}
 
 export const ProductsScreen = ({navigation}: Props) => {
   const {products, loadProducts} = useContext(ProductsContext);
+  const {logOut} = useContext(AuthContext);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async () => {
     setRefreshing(true);
@@ -37,8 +40,6 @@ export const ProductsScreen = ({navigation}: Props) => {
     });
   }, []);
 
-  // TODO: Pull to refresh
-  const loadProductosFromBackend = async () => {};
   return (
     <View style={styles.container}>
       <FlatList
@@ -48,7 +49,6 @@ export const ProductsScreen = ({navigation}: Props) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         refreshing={refreshing}
-        onRefresh={() => console.log('refreshing')}
         renderItem={({item}) => (
           <TouchableOpacity
             activeOpacity={0.8}
@@ -62,6 +62,13 @@ export const ProductsScreen = ({navigation}: Props) => {
           </TouchableOpacity>
         )}
         ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+      />
+      <Button
+        title="logout"
+        color="#5856D6"
+        onPress={() => {
+          logOut();
+        }}
       />
     </View>
   );

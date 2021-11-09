@@ -1,6 +1,7 @@
 import React, {createContext, useState, useEffect} from 'react';
 import {Producto, ProductsResponse} from '../interfaces/productsInterfaces';
 import cafeApi from '../api/cafeApi';
+import {Alert} from 'react-native';
 
 type ProductsContextProps = {
   products: Producto[];
@@ -11,7 +12,7 @@ type ProductsContextProps = {
     productName: string,
     productId: string,
   ) => Promise<void>;
-  deleteProduct: (id: string) => Promise<void>;
+  deleteProduct: (id: string) => Promise<Producto>;
   loadProductById: (id: string) => Promise<Producto>;
   uploadImage: (data: any, id: string) => Promise<void>; // TODO: Cambiar any
 };
@@ -54,7 +55,18 @@ export const ProductsProvider = ({children}: any) => {
       products.map(prod => (prod._id === producto._id ? producto : prod)),
     );
   };
-  const deleteProduct = async (id: string) => {};
+  const deleteProduct = async (id: string) => {
+    try {
+      const {data: producto} = await cafeApi.delete<Producto>(
+        `productos/${id}`,
+      );
+      await loadProducts();
+      return producto;
+    } catch (error: any) {
+      Alert.alert('Error en el borrado', error.errors[0].msg);
+      return {} as Producto;
+    }
+  };
   const loadProductById = async (id: string): Promise<Producto> => {
     const {data: producto} = await cafeApi.get<Producto>(`productos/${id}`);
     return producto;

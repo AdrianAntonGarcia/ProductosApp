@@ -3,10 +3,11 @@ import cafeApi from '../api/cafeApi';
 import {CategoriesResponse, Categoria} from '../interfaces/categoriesInterface';
 
 export const useCategories = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<Categoria[]>([]);
 
   const getCategories = async () => {
+    setIsLoading(true);
     const {
       data: {categorias},
     } = await cafeApi.get<CategoriesResponse>('/categorias');

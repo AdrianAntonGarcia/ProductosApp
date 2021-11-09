@@ -15,6 +15,7 @@ import {useCategories} from '../hooks/useCategories';
 import {LoadingScreen} from './LoadingScreen';
 import {useForm} from '../hooks/useForm';
 import {ProductsContext} from '../context/ProductsContext';
+
 interface Props
   extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {}
 
@@ -26,7 +27,7 @@ export const ProductScreen = ({
 }: Props) => {
   const {categories, isLoading} = useCategories();
 
-  const {loadProductById, addProduct, updateProduct} =
+  const {loadProductById, addProduct, updateProduct, deleteProduct} =
     useContext(ProductsContext);
 
   const {_id, categoriaId, nombre, img, form, onChange, setFormValue} = useForm(
@@ -56,6 +57,13 @@ export const ProductScreen = ({
       const tempCategoriaId = categoriaId || categories[0]._id;
       const newProduct = await addProduct(tempCategoriaId, nombre);
       onChange(newProduct._id, '_id');
+    }
+  };
+
+  const deleteProd = async () => {
+    if (_id.length > 0) {
+      const producto = await deleteProduct(_id);
+      producto && navigation.navigate('ProductsScreen');
     }
   };
 
@@ -91,17 +99,23 @@ export const ProductScreen = ({
           ))}
         </Picker>
         <Button title="Guardar" color="#5856D6" onPress={saveOrUpdate} />
+
         {_id.length > 0 && (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              marginTop: 10,
-            }}>
-            <Button title="Cámara" onPress={() => {}} color="#5856D6" />
-            <View style={{width: 10}} />
-            <Button title="Galería" onPress={() => {}} color="#5856D6" />
-          </View>
+          <>
+            <View style={{marginTop: 10}}>
+              <Button title="Eliminar" color="red" onPress={deleteProd} />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginTop: 10,
+              }}>
+              <Button title="Cámara" onPress={() => {}} color="#5856D6" />
+              <View style={{width: 10}} />
+              <Button title="Galería" onPress={() => {}} color="#5856D6" />
+            </View>
+          </>
         )}
         {/* <Text>{JSON.stringify(form, null, 5)}</Text> */}
         {img.length > 0 && (
