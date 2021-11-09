@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Button,
+  Image,
 } from 'react-native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {ProductsStackParams} from '../navigator/ProductsNavigator';
@@ -23,8 +24,6 @@ export const ProductScreen = ({
     params: {id = '', name = ''},
   },
 }: Props) => {
-  const [selectedLanguage, setSelectedLanguage] = useState();
-
   const {categories, isLoading} = useCategories();
 
   const {loadProductById} = useContext(ProductsContext);
@@ -41,6 +40,7 @@ export const ProductScreen = ({
   const loadProduct = async () => {
     if (id.length === 0) return;
     const product = await loadProductById(id);
+    console.log(product);
     setFormValue({
       _id: product._id,
       categoriaId: product.categoria._id,
@@ -72,10 +72,8 @@ export const ProductScreen = ({
         {/* Picker / Selector */}
         <Text style={styles.label}>Seleccione la categoría:</Text>
         <Picker
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedLanguage(itemValue)
-          }>
+          selectedValue={categoriaId}
+          onValueChange={itemValue => onChange(itemValue, 'categoriaId')}>
           {categories.map(c => (
             <Picker.Item label={c.nombre} value={c._id} key={c._id} />
           ))}
@@ -91,7 +89,13 @@ export const ProductScreen = ({
           <View style={{width: 10}} />
           <Button title="Galería" onPress={() => {}} color="#5856D6" />
         </View>
-        <Text>{JSON.stringify(form, null, 5)}</Text>
+        {/* <Text>{JSON.stringify(form, null, 5)}</Text> */}
+        {img.length > 0 && (
+          <Image
+            source={{uri: img}}
+            style={{width: '100%', height: 300, marginTop: 20}}
+          />
+        )}
       </ScrollView>
     </View>
   );
