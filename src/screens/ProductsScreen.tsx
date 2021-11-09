@@ -1,6 +1,14 @@
 import {StackScreenProps} from '@react-navigation/stack';
-import React, {useContext, useEffect} from 'react';
-import {Text, View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import {ProductsContext} from '../context/ProductsContext';
 import {ProductsStackParams} from '../navigator/ProductsNavigator';
 
@@ -9,6 +17,12 @@ interface Props
 
 export const ProductsScreen = ({navigation}: Props) => {
   const {products, loadProducts} = useContext(ProductsContext);
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadProducts();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -24,11 +38,17 @@ export const ProductsScreen = ({navigation}: Props) => {
   }, []);
 
   // TODO: Pull to refresh
+  const loadProductosFromBackend = async () => {};
   return (
     <View style={styles.container}>
       <FlatList
         data={products}
         keyExtractor={p => p._id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        refreshing={refreshing}
+        onRefresh={() => console.log('refreshing')}
         renderItem={({item}) => (
           <TouchableOpacity
             activeOpacity={0.8}
