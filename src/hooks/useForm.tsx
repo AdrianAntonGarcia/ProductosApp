@@ -10,9 +10,17 @@ export const useForm = <T extends Object>(initState: T) => {
     });
   };
 
+  /**
+   * Si queremos establecer todos los valores del formulario de golpe
+   */
+  const setFormValue = (form: T) => {
+    setState({...state, ...form});
+  };
+
   return {
     ...state,
     form: state,
     onChange,
+    setFormValue,
   };
 };

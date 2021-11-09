@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -12,26 +12,63 @@ import {ProductsStackParams} from '../navigator/ProductsNavigator';
 import {Picker} from '@react-native-picker/picker';
 import {useCategories} from '../hooks/useCategories';
 import {LoadingScreen} from './LoadingScreen';
+import {useForm} from '../hooks/useForm';
+import {ProductsContext} from '../context/ProductsContext';
 interface Props
   extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {}
 
 export const ProductScreen = ({
   navigation,
   route: {
-    params: {id, name},
+    params: {id = '', name = ''},
   },
 }: Props) => {
   const [selectedLanguage, setSelectedLanguage] = useState();
+
   const {categories, isLoading} = useCategories();
+
+  const {loadProductById} = useContext(ProductsContext);
+
+  const {_id, categoriaId, nombre, img, form, onChange, setFormValue} = useForm(
+    {
+      _id: id,
+      categoriaId: '',
+      nombre: name,
+      img: '',
+    },
+  );
+
+  const loadProduct = async () => {
+    if (id.length === 0) return;
+    const product = await loadProductById(id);
+    setFormValue({
+      _id: product._id,
+      categoriaId: product.categoria._id,
+      nombre: product.nombre,
+      img: product.img ? product.img : '',
+    });
+  };
+
   useEffect(() => {
     navigation.setOptions({headerTitle: name ? name : 'Nuevo Producto'});
   }, []);
+
+  useEffect(() => {
+    loadProduct();
+  }, []);
+
   if (isLoading) return <LoadingScreen></LoadingScreen>;
+
   return (
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.label}>Nombre del producto:</Text>
-        <TextInput placeholder="Producto" style={styles.textInput} />
+        <TextInput
+          placeholder="Producto"
+          style={styles.textInput}
+          value={nombre}
+          onChangeText={value => onChange(value, 'nombre')}
+        />
         {/* Picker / Selector */}
         <Text style={styles.label}>Seleccione la categoría:</Text>
         <Picker
@@ -54,6 +91,7 @@ export const ProductScreen = ({
           <View style={{width: 10}} />
           <Button title="Galería" onPress={() => {}} color="#5856D6" />
         </View>
+        <Text>{JSON.stringify(form, null, 5)}</Text>
       </ScrollView>
     </View>
   );
