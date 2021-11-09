@@ -15,6 +15,7 @@ import {useCategories} from '../hooks/useCategories';
 import {LoadingScreen} from './LoadingScreen';
 import {useForm} from '../hooks/useForm';
 import {ProductsContext} from '../context/ProductsContext';
+import {Alert} from 'react-native';
 
 interface Props
   extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {}
@@ -53,10 +54,12 @@ export const ProductScreen = ({
   const saveOrUpdate = async () => {
     if (_id.length > 0) {
       updateProduct(categoriaId, nombre, id);
+      Alert.alert('Producto actualizado');
     } else {
       const tempCategoriaId = categoriaId || categories[0]._id;
       const newProduct = await addProduct(tempCategoriaId, nombre);
       onChange(newProduct._id, '_id');
+      Alert.alert('Producto creado');
     }
   };
 
