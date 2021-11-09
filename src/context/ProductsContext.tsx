@@ -26,8 +26,6 @@ export const ProductsProvider = ({children}: any) => {
     } = await cafeApi.get<ProductsResponse>('productos?limite=50');
     // setProducts(previousProducts => [...previousProducts, ...productos]);
     setProducts([...productos]);
-
-    console.log(productos);
   };
   const addProduct = async (categoryId: string, productName: string) => {};
   const updateProduct = async (

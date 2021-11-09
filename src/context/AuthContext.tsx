@@ -34,7 +34,6 @@ export const AuthProvider = ({
   );
   const signUp = async (registerData: RegisterData) => {
     try {
-      console.log(registerData);
       const resp = await cafeApi.post<LoginResponse>('/usuarios', registerData);
       dispatch({
         type: 'signUp',

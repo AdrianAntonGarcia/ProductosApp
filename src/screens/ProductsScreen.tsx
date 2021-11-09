@@ -33,7 +33,6 @@ export const ProductsScreen = ({navigation}: Props) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              console.log('click');
               navigation.navigate('ProductScreen', {
                 id: item._id,
                 name: item.nombre,
