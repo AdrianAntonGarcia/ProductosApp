@@ -26,7 +26,8 @@ export const ProductScreen = ({
 }: Props) => {
   const {categories, isLoading} = useCategories();
 
-  const {loadProductById} = useContext(ProductsContext);
+  const {loadProductById, addProduct, updateProduct} =
+    useContext(ProductsContext);
 
   const {_id, categoriaId, nombre, img, form, onChange, setFormValue} = useForm(
     {
@@ -49,9 +50,20 @@ export const ProductScreen = ({
     });
   };
 
+  const saveOrUpdate = () => {
+    if (id.length > 0) {
+      updateProduct(categoriaId, nombre, id);
+    } else {
+      const tempCategoriaId = categoriaId || categories[0]._id;
+      addProduct(tempCategoriaId, nombre);
+    }
+  };
+
   useEffect(() => {
-    navigation.setOptions({headerTitle: name ? name : 'Nuevo Producto'});
-  }, []);
+    navigation.setOptions({
+      headerTitle: nombre ? nombre : 'Sin Nombre',
+    });
+  }, [nombre]);
 
   useEffect(() => {
     loadProduct();
@@ -78,17 +90,19 @@ export const ProductScreen = ({
             <Picker.Item label={c.nombre} value={c._id} key={c._id} />
           ))}
         </Picker>
-        <Button title="Guardar" onPress={() => {}} color="#5856D6" />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginTop: 10,
-          }}>
-          <Button title="Cámara" onPress={() => {}} color="#5856D6" />
-          <View style={{width: 10}} />
-          <Button title="Galería" onPress={() => {}} color="#5856D6" />
-        </View>
+        <Button title="Guardar" color="#5856D6" onPress={saveOrUpdate} />
+        {id.length > 0 && (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginTop: 10,
+            }}>
+            <Button title="Cámara" onPress={() => {}} color="#5856D6" />
+            <View style={{width: 10}} />
+            <Button title="Galería" onPress={() => {}} color="#5856D6" />
+          </View>
+        )}
         {/* <Text>{JSON.stringify(form, null, 5)}</Text> */}
         {img.length > 0 && (
           <Image
