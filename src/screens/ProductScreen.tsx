@@ -10,6 +10,8 @@ import {
 import {StackScreenProps} from '@react-navigation/stack';
 import {ProductsStackParams} from '../navigator/ProductsNavigator';
 import {Picker} from '@react-native-picker/picker';
+import {useCategories} from '../hooks/useCategories';
+import {LoadingScreen} from './LoadingScreen';
 interface Props
   extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {}
 
@@ -20,9 +22,11 @@ export const ProductScreen = ({
   },
 }: Props) => {
   const [selectedLanguage, setSelectedLanguage] = useState();
+  const {categories, isLoading} = useCategories();
   useEffect(() => {
     navigation.setOptions({headerTitle: name ? name : 'Nuevo Producto'});
   }, []);
+  if (isLoading) return <LoadingScreen></LoadingScreen>;
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -35,8 +39,9 @@ export const ProductScreen = ({
           onValueChange={(itemValue, itemIndex) =>
             setSelectedLanguage(itemValue)
           }>
-          <Picker.Item label="Java" value="java" />
-          <Picker.Item label="JavaScript" value="js" />
+          {categories.map(c => (
+            <Picker.Item label={c.nombre} value={c._id} key={c._id} />
+          ))}
         </Picker>
         <Button title="Guardar" onPress={() => {}} color="#5856D6" />
         <View
