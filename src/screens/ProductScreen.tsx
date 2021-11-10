@@ -88,6 +88,16 @@ export const ProductScreen = ({
     });
   };
 
+  const takePhotoFromGallery = () => {
+    launchImageLibrary({mediaType: 'photo', quality: 0.5}, resp => {
+      if (resp.didCancel) return;
+      if (resp && resp.assets && resp.assets.length > 0) {
+        setTempUri(resp.assets[0].uri || null);
+        uploadImage(resp, _id);
+      }
+    });
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerTitle: nombre ? nombre : 'Sin Nombre',
@@ -140,7 +150,13 @@ export const ProductScreen = ({
                 color="#5856D6"
               />
               <View style={{width: 10}} />
-              <Button title="Galería" onPress={() => {}} color="#5856D6" />
+              <Button
+                title="Galería"
+                onPress={() => {
+                  takePhotoFromGallery();
+                }}
+                color="#5856D6"
+              />
             </View>
           </>
         )}
