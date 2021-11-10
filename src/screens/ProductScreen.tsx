@@ -16,6 +16,7 @@ import {LoadingScreen} from './LoadingScreen';
 import {useForm} from '../hooks/useForm';
 import {ProductsContext} from '../context/ProductsContext';
 import {Alert} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 interface Props
   extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {}
@@ -26,6 +27,8 @@ export const ProductScreen = ({
     params: {id = '', name = ''},
   },
 }: Props) => {
+  const [tempUri, setTempUri] = useState<string | null>(null);
+
   const {categories, isLoading} = useCategories();
 
   const {loadProductById, addProduct, updateProduct, deleteProduct} =
@@ -68,6 +71,16 @@ export const ProductScreen = ({
       const producto = await deleteProduct(_id);
       producto && navigation.navigate('ProductsScreen');
     }
+  };
+
+  const takePhoto = () => {
+    launchCamera({mediaType: 'photo', quality: 0.5}, resp => {
+      if (resp.didCancel) return;
+      if (resp && resp.assets && resp.assets.length > 0) {
+        setTempUri(resp.assets[0].uri || null);
+      }
+      console.log(resp);
+    });
   };
 
   useEffect(() => {
@@ -114,16 +127,28 @@ export const ProductScreen = ({
                 justifyContent: 'center',
                 marginTop: 10,
               }}>
-              <Button title="Cámara" onPress={() => {}} color="#5856D6" />
+              <Button
+                title="Cámara"
+                onPress={() => {
+                  takePhoto();
+                }}
+                color="#5856D6"
+              />
               <View style={{width: 10}} />
               <Button title="Galería" onPress={() => {}} color="#5856D6" />
             </View>
           </>
         )}
         {/* <Text>{JSON.stringify(form, null, 5)}</Text> */}
-        {img.length > 0 && (
+        {img.length > 0 && !tempUri && (
           <Image
             source={{uri: img}}
+            style={{width: '100%', height: 300, marginTop: 20}}
+          />
+        )}
+        {tempUri && (
+          <Image
+            source={{uri: tempUri!}}
             style={{width: '100%', height: 300, marginTop: 20}}
           />
         )}
