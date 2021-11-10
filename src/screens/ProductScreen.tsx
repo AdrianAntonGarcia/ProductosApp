@@ -31,8 +31,13 @@ export const ProductScreen = ({
 
   const {categories, isLoading} = useCategories();
 
-  const {loadProductById, addProduct, updateProduct, deleteProduct} =
-    useContext(ProductsContext);
+  const {
+    loadProductById,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    uploadImage,
+  } = useContext(ProductsContext);
 
   const {_id, categoriaId, nombre, img, form, onChange, setFormValue} = useForm(
     {
@@ -78,8 +83,8 @@ export const ProductScreen = ({
       if (resp.didCancel) return;
       if (resp && resp.assets && resp.assets.length > 0) {
         setTempUri(resp.assets[0].uri || null);
+        uploadImage(resp, _id);
       }
-      console.log(resp);
     });
   };
 

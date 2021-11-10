@@ -2,6 +2,7 @@ import React, {createContext, useState, useEffect} from 'react';
 import {Producto, ProductsResponse} from '../interfaces/productsInterfaces';
 import cafeApi from '../api/cafeApi';
 import {Alert} from 'react-native';
+import {ImagePickerResponse} from 'react-native-image-picker';
 
 type ProductsContextProps = {
   products: Producto[];
@@ -14,7 +15,7 @@ type ProductsContextProps = {
   ) => Promise<void>;
   deleteProduct: (id: string) => Promise<Producto>;
   loadProductById: (id: string) => Promise<Producto>;
-  uploadImage: (data: any, id: string) => Promise<void>; // TODO: Cambiar any
+  uploadImage: (data: ImagePickerResponse, id: string) => Promise<void>; // TODO: Cambiar any
 };
 
 export const ProductsContext = createContext({} as ProductsContextProps);
@@ -71,7 +72,26 @@ export const ProductsProvider = ({children}: any) => {
     const {data: producto} = await cafeApi.get<Producto>(`productos/${id}`);
     return producto;
   };
-  const uploadImage = async (data: any, id: string) => {};
+  const uploadImage = async (data: ImagePickerResponse, id: string) => {
+    try {
+      let fileToUpload = {};
+      if (data && data.assets && data.assets.length > 0) {
+        fileToUpload = {
+          uri: data.assets[0].uri!,
+          type: data.assets[0].type!,
+          name: data.assets[0].fileName!,
+        };
+      }
+      const formData = new FormData();
+      formData.append('archivo', fileToUpload);
+      const resp = await cafeApi.put(`uploads/productos/${id}`, formData);
+      Alert.alert('Imagen subida correctamente');
+      await loadProducts();
+    } catch (error: any) {
+      console.log(error);
+      Alert.alert('Error en la subida de la imagen', error.errors[0].msg);
+    }
+  };
 
   useEffect(() => {
     loadProducts();
